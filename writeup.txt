@@ -1,0 +1,69 @@
+This is a write up for the easy THM room pokemon. Gotta catch them all you know
+
+3 pokemon of the starting types, the roots favourite pokemon. I think if you can guess the answer with 3 tries from your pokemon knowledge and the number of letters you win, that counts as PrivEsc. I'm going to try guess a little later on in the room after finding the first 3 types.
+
+Anyway so lets start off with an nmap scan to see what we have
+
+ nmap -sV -sS -A 10.10.73.185
+Starting Nmap 7.91 ( https://nmap.org ) at 2021-05-22 20:56 SAST
+Nmap scan report for 10.10.73.185
+Host is up (0.17s latency).
+Not shown: 998 closed ports
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.2p2 Ubuntu 4ubuntu2.8 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   2048 58:14:75:69:1e:a9:59:5f:b2:3a:69:1c:6c:78:5c:27 (RSA)
+|   256 23:f5:fb:e7:57:c2:a5:3e:c2:26:29:0e:74:db:37:c2 (ECDSA)
+|_  256 f1:9b:b5:8a:b9:29:aa:b6:aa:a2:52:4a:6e:65:95:c5 (ED25519)
+80/tcp open  http    Apache httpd 2.4.18 ((Ubuntu))
+|_http-server-header: Apache/2.4.18 (Ubuntu)
+|_http-title: Can You Find Them All?                                                                                
+No exact OS matches for host (If you know what OS is running on it, see https://nmap.org/submit/ ).                 
+TCP/IP fingerprint:                                                                                                 
+OS:SCAN(V=7.91%E=4%D=5/22%OT=22%CT=1%CU=31551%PV=Y%DS=2%DC=T%G=Y%TM=60A9541                                         
+OS:B%P=x86_64-pc-linux-gnu)SEQ(SP=FC%GCD=1%ISR=10E%TI=Z%CI=Z%II=I%TS=A)SEQ(                                         
+OS:SP=FC%GCD=1%ISR=10E%TI=Z%CI=Z%TS=A)OPS(O1=M506ST11NW7%O2=M506ST11NW7%O3=                                         
+OS:M506NNT11NW7%O4=M506ST11NW7%O5=M506ST11NW7%O6=M506ST11)WIN(W1=F4B3%W2=F4                                         
+OS:B3%W3=F4B3%W4=F4B3%W5=F4B3%W6=F4B3)ECN(R=Y%DF=Y%T=40%W=F507%O=M506NNSNW7                                         
+OS:%CC=Y%Q=)T1(R=Y%DF=Y%T=40%S=O%A=S+%F=AS%RD=0%Q=)T2(R=N)T3(R=N)T4(R=Y%DF=                                         
+OS:Y%T=40%W=0%S=A%A=Z%F=R%O=%RD=0%Q=)T5(R=Y%DF=Y%T=40%W=0%S=Z%A=S+%F=AR%O=%                                         
+OS:RD=0%Q=)T6(R=Y%DF=Y%T=40%W=0%S=A%A=Z%F=R%O=%RD=0%Q=)T7(R=Y%DF=Y%T=40%W=0                                         
+OS:%S=Z%A=S+%F=AR%O=%RD=0%Q=)U1(R=Y%DF=N%T=40%IPL=164%UN=0%RIPL=G%RID=G%RIP                                         
+OS:CK=G%RUCK=G%RUD=G)IE(R=Y%DFI=N%T=40%CD=S)                                                                        
+                                                                                                                    
+Network Distance: 2 hops                                                                                            
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel                                                             
+                                                                                                                    
+TRACEROUTE (using port 587/tcp)                                                                                     
+HOP RTT       ADDRESS                                                                                               
+1   164.48 ms 10.9.0.1                                                                                              
+2   165.00 ms 10.10.73.185                                                                                         OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .               
+Nmap done: 1 IP address (1 host up) scanned in 32.91 seconds 
+
+
+So two ports and it's not an actual website just the main page. I'm still going to run gobuster because that doesn't mean I can't find anything interesting.
+
+and goBuster didn't get anything interesting.
+
+Next I'm going to go see if there's anything in the code I can use
+	And in the code we find some possible ssh credentials in the format <****>:<****>
+So let's see if there's anything in the ssh I can use.
+
+So in once we're in the pokemon account we can find the first grass type on the desktop. Unzip the folder and read the contents in the text file
+
+The content are in hexadecimal form but you can find an online converter to turn them into text.
+
+So we can use the 
+	locate water-type
+command to find the destination for the file we once. Once again it's encrypted. I'll save you the search it's a +19 caeser cipher. You can decode it using tools online as well.
+
+Now to find the fire type the same way that we founfthe water type file and we can decode this again to once again work out which type of pokemon it is.
+	Anyway if you hate searching for what form of cryptography was used it's base64
+
+now we need to find the roots favourite pokemon.
+
+After some searching in the home directory there are a series of folders in Videos that lead to a specific file that we can use cat on to tell us the credentials for another account that we can su to
+
+Anyway once we became the other user. I user locate on the keyword pokemon. Found a .txt file the held the final flag and completed the room.
+
+I'm lowkey annoyed because it was the first pokemon I guessed but some punctuation played me and I didn't get it right. but at least it meant that Ic ould play until the end of the room
